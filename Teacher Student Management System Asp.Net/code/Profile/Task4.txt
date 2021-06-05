@@ -1,0 +1,171 @@
+--(a) Write a query to find all books that are overdue (by at least 3 days) for return to the
+--library.
+
+
+--(i) First to Borrow a book Insert data into Borrowed Book Details table with overdue
+-- actual return date data.
+
+Insert Into [dbo].[Borrowed_Details]
+(BorrowedID,Book_ID,borrowefromdate,borrowetodate,actualreturndate,IssuedBY)
+Values ('27','12', '05-01-2021', '05-05-2021', '05-09-2021', 'Jhon')
+
+
+--(ii) Run the Command to select data is inserted into table.
+Select * From [dbo].[Borrowed_Details]
+
+--(iii) Get All Book Ids which are overdue
+select Book_ID
+from [dbo].[Borrowed_Details]
+WHERE actualreturndate >= DATEADD(DAY,3,borrowetodate
+
+Select * from [dbo].[Cataloge] AS a
+Where a.ISBN IN (select Book_ID
+from [dbo].[Borrowed_Details]
+WHERE actualreturndate >= DATEADD(DAY,3,borrowetodate))
+**********
+
+
+
+--( b) Write a query to produce a list of customers who have made less than 5 loans in the
+--past 3 months. Show appropriate customer and loan details in your answer.
+
+
+SELECT std.BorrowedID AS LoanID,std.StudentID, std.StudentName,
+Std.DOB,Std.Gender,Std.Department , std.dateOfmemberShip ,std.Contact,
+Count(std.StudentID) AS NoOf_Customers
+FROM Student_Details AS Std
+INNER JOIN [Borrowed_Details] As loan
+ON Std.BorrowedID = loan.BorrowedID
+Group BY Std.BorrowedID, loan.BorrowedID ,std.StudentID, std.StudentName,
+Std.DOB,Std.Gender,Std.Department , std.dateOfmemberShip ,std.Contact ,
+loan.actualreturndate
+having count(Std.StudentID) < 5 And loan.actualreturndate >
+DATEADD(MONTH,-3,loan.actualreturndate)
+
+
+
+
+
+--(c) Write a query to produce the weekly lending report (loan-item-id description,
+--start-date-time, due-date-time, actual-return-date-time, lender details
+
+
+SELECT DATEPART ( week, actualreturndate) as week_Number, loan.Book_ID AS
+Loan_Item_ID,std.Book_price As Loan_Item_Price, std.BookStatus As
+Loan_Item_Status, Std.DateOfPurchase As Start_Time,Std.DueDate As
+Due_Date_Time, loan.actualreturndate As Actual_Return_Date , loan.IssuedBY As
+Lender
+FROM BookItem_Details AS Std
+INNER JOIN [Borrowed_Details] As loan
+ON Std.BorrowedID = loan.BorrowedID
+Group BY DATEPART ( week, actualreturndate) , loan.Book_ID ,std.Book_price,
+std.BookStatus, Std.DateOfPurchase,Std.DueDate, loan.actualreturndate ,
+loan.IssuedBY
+
+
+
+
+
+--( d )Write a stored procedure to provide a report showing current interlibrary loans,
+--showing all current inter-library loan items, including the partner library who loaned the
+--item to Starlabs, the item details and the current loan duration calculated in days.
+
+CREATE PROCEDURE [dbo].[CurrentInterLibraryLoans_procedure]
+@ISBN int,
+@BorrowedID smallint,
+@Book_ID int AS
+IF @ISBN is NULL OR @BorrowedID is NULL
+BEGIN RAISERROR('CurrentInterLibraryLoans check In not successful due to Invalid
+ISBN or BorrowedID.',11,1)
+RETURN END
+--Test to see if the Loaned_item exists in library.
+DECLARE @ItemCount
+int SELECT @ItemCount = count(*)
+FROM [dbo].[BookItem_Details] as b JOIN [dbo].[Borrowed_Details] as bd
+ON b.BookID = bd.Book_ID
+WHERE b.BorrowedID = @BorrowedID AND bd.Book_ID = @Book_ID AND
+bd.BorrowedID= @BorrowedID
+IF @ItemCount < 1 BEGIN RAISERROR('Check in not successful. Loaned Item does
+not exist in this library.',12,1)
+RETURN END
+--Test to see if the item is not on loan.
+DECLARE @BookStatus nvarchar (50)
+SELECT @BookStatus = BookStatus FROM [dbo].[BookItem_Details] As bid WHERE
+bid.BookID = @ISBN AND bid.BorrowedID = @BorrowedID
+IF @BookStatus != 'Lent' BEGIN RAISERROR('Check in not successful. Item is not
+currently checked out.',13,1)
+RETURN END
+--Retrieve the item details and the title number.
+DECLARE @Booktitle nvarchar (50)
+SELECT @Booktitle= item.Book_title
+FROM [dbo].[Books] As item
+WHERE item.ISBN = @ISBN
+--Retrieve Book Item the MemberID ,check out date.
+--Retrieve the due date.
+DECLARE @MemberID int,
+@OutDate datetime,
+@DueDate datetime
+SELECT @MemberID = std.StudentID,
+@OutDate = bod.actualreturndate,
+@DueDate = bod.borrowetodate FROM [dbo].[Borrowed_Details] As bod
+Inner Join [dbo].[Student_Details] As std
+ON std.BorrowedID=bod.BorrowedID
+Where bod.Book_ID = @Book_ID AND bod.BorrowedID = @BorrowedID
+BEGIN TRANSACTION
+
+
+--(e) Write a stored procedure to provide a report showing a monthly itemized statement
+--of loans for each lender. The procedure should be able to accept appropriate parameter
+--values to enable dynamic search by week, month or quarter (3 months) Include
+--appropriate payment, tax (at 20% vat), and totals in your report
+
+CREATE PROCEDURE [dbo].[MonthlyItemizedStatement_procedure]
+@ISBN int,
+@BorrowedID smallint,
+@Book_ID int AS
+IF @ISBN is NULL OR @BorrowedID is NULL
+BEGIN RAISERROR('CurrentInterLibraryLoans check In not successful due to Invalid
+ISBN or BorrowedID.',11,1)
+RETURN END
+--Test to see if the Loaned_item exists in library.
+DECLARE @ItemCount
+int SELECT @ItemCount = count(*)
+FROM [dbo].[BookItem_Details] as b JOIN [dbo].[Borrowed_Details] as bd
+ON b.BookID = bd.Book_ID
+WHERE b.BorrowedID = @BorrowedID AND bd.Book_ID = @Book_ID AND
+bd.BorrowedID= @BorrowedID
+IF @ItemCount < 1 BEGIN RAISERROR('Check in not successful. Loaned Item does
+not exist in this library.',12,1)
+RETURN END
+--Test to see if the item is not on loan.
+DECLARE @BookStatus nvarchar (50)
+SELECT @BookStatus = BookStatus FROM [dbo].[BookItem_Details] As bid WHERE
+bid.BookID = @ISBN AND bid.BorrowedID = @BorrowedID
+IF @BookStatus != 'Lent' BEGIN RAISERROR('Check in not successful. Item is not
+currently checked out.',13,1)
+RETURN END
+
+DECLARE @Booktitle nvarchar (50)
+SELECT @Booktitle= item.Book_title
+FROM [dbo].[Books] As item
+WHERE item.ISBN = @ISBN
+--Retrieve Book Item the MemberID ,check out date.
+--Retrieve the due date.
+SELECT DATEPART ( MONTH, actualreturndate) as Monthly, loan.Book_ID AS
+Loan_Item_ID,std.Book_price As Loan_Item_Price, std.BookStatus As
+Loan_Item_Status, Std.DateOfPurchase As Start_Time,Std.DueDate As
+Due_Date_Time, loan.actualreturndate As Actual_Return_Date , loan.IssuedBY As
+Lender
+FROM BookItem_Details AS Std
+INNER JOIN [Borrowed_Details] As loan
+ON Std.BorrowedID = loan.BorrowedID
+Group BY DATEPART ( MONTH, actualreturndate) , loan.Book_ID
+,std.Book_price, std.BookStatus, Std.DateOfPurchase,Std.DueDate,
+loan.actualreturndate , loan.IssuedBY
+--Having COUNT(loan.Amount) * 20/100
+BEGIN TRANSACTION
+
+
+
+
+

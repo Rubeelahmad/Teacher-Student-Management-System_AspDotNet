@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "TeacherManagement", ".", "{057BE500-C194-4903-88C2-692522AA4A6A}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_58543"
+		Debug.AspNetCompiler.PhysicalPath = "D:\AngularProject\TeacherManagement\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_58543\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_58543"
+		Release.AspNetCompiler.PhysicalPath = "D:\AngularProject\TeacherManagement\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_58543\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "58543"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{057BE500-C194-4903-88C2-692522AA4A6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{057BE500-C194-4903-88C2-692522AA4A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {58708A82-EBE4-43A6-BE97-5B44DD0E178B}
+	EndGlobalSection
+EndGlobal

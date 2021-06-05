@@ -1,0 +1,128 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Teacher Management</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- END META SECTION -->
+
+    <!-- CSS INCLUDE -->
+    <link rel="stylesheet" type="text/css" id="theme" href="css/theme-default.css" />
+    <!-- EOF CSS INCLUDE -->
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+
+        <div class="page-container">
+            <!-- PAGE CONTENT -->
+            <div class="page-content" style="margin-left: 0px !important;">
+
+                <!-- START X-NAVIGATION VERTICAL -->
+                <ul class="x-navigation x-navigation-horizontal x-navigation-panel">
+
+                    <!-- SIGN OUT -->
+                    <li class="xn-icon-button pull-right" style="padding-right:30px;">
+                        <a href="Login.aspx">Logout</a>
+                    </li>
+                    <!-- END SIGN OUT -->
+
+                    <!-- TASKS -->
+                    <li class="xn-icon-button" style="padding: 1%; color: white;">
+                        <asp:Label ID="lblWelcome" runat="server"></asp:Label>
+                    </li>
+                    <% if (Session["Role"] != null && Convert.ToString(Session["Role"]) == "S")
+                       { %>
+                    <li class="xn-icon-button" style="padding: 1%;">
+                        <input type="button" value="Profile" class="btn btn-info btn-block" style="border-radius: 5px;" onclick="window.location.href = 'EditStudentProfile.aspx';"/>
+                    </li>
+                    <li class="xn-icon-button" style="padding: 1%;">
+                        <input type="button" value="Enquires" class="btn btn-info btn-block" style="border-radius: 5px;" onclick="window.location.href = 'TeacherEnquiry.aspx';"/>
+                    </li>
+                    <%} %>
+                    <% if (Session["Role"] != null && Convert.ToString(Session["Role"]) == "T")
+                       { %>
+                    <li class="xn-icon-button" style="padding: 1%;">
+                        <input type="button" value="Profile" class="btn btn-info btn-block" style="border-radius: 5px;" onclick="window.location.href = 'EditTeacherProfile.aspx';"/>
+                    </li>
+                    <li class="xn-icon-button" style="padding: 1%;">
+                        <input type="button" value="Enquires" class="btn btn-info btn-block" style="border-radius: 5px;" onclick="window.location.href = 'TeacherEnquiryList.aspx';"/>
+                    </li>
+                    <%} %>
+                    <!-- END TASKS -->
+                </ul>
+                <!-- END X-NAVIGATION VERTICAL -->
+                <ul class="breadcrumb">
+                    <li><a href="#"></a></li>
+                </ul>
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </div>
+            <!-- END PAGE CONTENT -->
+
+
+        </div>
+    </form>
+
+    <!-- START SCRIPTS -->
+    <!-- START PLUGINS -->
+    <script type="text/javascript" src="js/plugins/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="js/plugins/jquery/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/plugins/bootstrap/bootstrap.min.js"></script>
+    <!-- END PLUGINS -->
+
+    <!-- THIS PAGE PLUGINS -->
+    <script type='text/javascript' src='js/plugins/icheck/icheck.min.js'></script>
+    <script type="text/javascript" src="js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js"></script>
+
+    <script type="text/javascript" src="js/plugins/bootstrap/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="js/plugins/bootstrap/bootstrap-file-input.js"></script>
+    <script type="text/javascript" src="js/plugins/bootstrap/bootstrap-select.js"></script>
+    <script type="text/javascript" src="js/plugins/tagsinput/jquery.tagsinput.min.js"></script>
+    <!-- END THIS PAGE PLUGINS -->
+
+    <!-- START TEMPLATE -->
+    <script type="text/javascript" src="js/settings.js"></script>
+
+    <script type="text/javascript" src="js/plugins.js"></script>
+    <script type="text/javascript" src="js/actions.js"></script>
+    <!-- END TEMPLATE -->
+
+    <script>
+        function readURL(input) {
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#blah').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#imgInp").change(function () {
+            readURL(this);
+        });
+
+        $('select').on('change', function () {
+            var value = $(this).val();
+            var output = '';
+            for (var i = 1; i <= value; i++) {
+                output += '<div class="form-group"><label class="col-md-3 control-label">Select Candidates</label><div class="col-md-6"><select class="form-control select" name="candname"><option value="">Candidate</option><option value="Candidate1">Candidate1</option><option value="Candidate2">Candidate2</option><option value="Candidate3">Candidate3</option></select></div></div>'
+
+            }
+            $('#candidates').empty().append(output);
+        });
+    </script>
+
+    <!-- END SCRIPTS -->
+</body>
+</html>
